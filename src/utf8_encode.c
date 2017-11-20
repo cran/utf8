@@ -18,17 +18,17 @@
 #include "rutf8.h"
 
 
-SEXP rutf8_utf8_encode(SEXP sx, SEXP swidth, SEXP squote,
-		       SEXP sjustify, SEXP sdisplay, SEXP sstyle,
-		       SEXP sutf8)
+SEXP rutf8_utf8_encode(SEXP sx, SEXP swidth, SEXP squote, SEXP sjustify,
+		       SEXP sescapes, SEXP sdisplay, SEXP sutf8)
 {
 	SEXP ans, selt, ans_i = NA_STRING, srender;
 	struct rutf8_string elt;
 	struct utf8lite_render *render;
 	enum rutf8_justify_type justify;
+	const char *escapes;
 	R_xlen_t i, n;
-	int width, quote, display, style, utf8;
-	int nprot = 0, w, quotes, flags;
+	int width, quote, display, utf8;
+	int err = 0, nprot = 0, w, quotes, flags;
 
 	if (sx == R_NilValue) {
 		return R_NilValue;
@@ -47,16 +47,13 @@ SEXP rutf8_utf8_encode(SEXP sx, SEXP swidth, SEXP squote,
 
 	quote = LOGICAL(squote)[0] == TRUE;
 	justify = rutf8_as_justify(sjustify);
+	escapes = rutf8_as_style(sescapes);
 	display = LOGICAL(sdisplay)[0] == TRUE;
-	style = LOGICAL(sstyle)[0] == TRUE;
 	utf8 = LOGICAL(sutf8)[0] == TRUE;
 
 	flags = (UTF8LITE_ESCAPE_CONTROL | UTF8LITE_ENCODE_C);
 	if (quote) {
 		flags |= UTF8LITE_ESCAPE_DQUOTE;
-	}
-	if (style) {
-		flags |= UTF8LITE_ENCODE_ESCFAINT;
 	}
 	if (display) {
 		flags |= UTF8LITE_ENCODE_RMDI;
@@ -103,6 +100,10 @@ SEXP rutf8_utf8_encode(SEXP sx, SEXP swidth, SEXP squote,
 
         PROTECT(srender = rutf8_alloc_render(flags)); nprot++;
 	render = rutf8_as_render(srender);
+	if (escapes) {
+		TRY(utf8lite_render_set_style(render, escapes,
+					      RUTF8_STYLE_CLOSE));
+	}
 
 	PROTECT(ans = duplicate(sx)); nprot++;
 
@@ -125,6 +126,8 @@ SEXP rutf8_utf8_encode(SEXP sx, SEXP swidth, SEXP squote,
 		SET_STRING_ELT(ans, i, ans_i);
 	}
 
+exit:
 	UNPROTECT(nprot);
+	CHECK_ERROR(err);
 	return ans;
 }

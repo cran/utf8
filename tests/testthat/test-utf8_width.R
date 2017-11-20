@@ -1,7 +1,7 @@
 context("utf8_width")
 
 test_that("'utf8_width' computes widths correctly", {
-    ctype <- switch_ctype("Unicode")
+    ctype <- switch_ctype("UTF-8")
     on.exit(Sys.setlocale("LC_CTYPE", ctype))
 
     expect_equal(utf8_width(c("hello", "\u200b", "\u22ee", "\u6027"),
@@ -11,7 +11,7 @@ test_that("'utf8_width' computes widths correctly", {
 
 
 test_that("'utf8_width' computes widths for extended unicode correctly", {
-    ctype <- switch_ctype("Unicode")
+    ctype <- switch_ctype("UTF-8")
     on.exit(Sys.setlocale("LC_CTYPE", ctype))
     skip_on_os("windows") # no extended Unicode
 
@@ -53,4 +53,12 @@ test_that("'utf8_width' gives NA for invalid data", {
 test_that("'utf8_width' gives width 1 for quotes", {
     expect_equal(utf8_width("\"", encode = TRUE), 1)
     expect_equal(utf8_width("\"", encode = FALSE), 1)
+})
+
+
+test_that("'utf8_width' gives correct with in C locale", {
+    ctype <- switch_ctype("C")
+    on.exit(Sys.setlocale("LC_CTYPE", ctype))
+    x <- intToUtf8(c(0x1F487, 0x200D, 0x2642, 0xFE0F))
+    expect_equal(utf8_width(x), nchar(utf8_encode(x)))
 })

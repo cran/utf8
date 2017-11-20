@@ -31,9 +31,12 @@ Functions for manipulating and printing UTF-8 encoded text:
 
   \item \code{\link{utf8_print}} prints UTF-8 character data to the screen;
 
-  \item \code{\link{utf8_width}} measures the display with of UTF-8 character
+  \item \code{\link{utf8_width}} measures the display width of UTF-8 character
     strings (many emoji and East Asian characters are twice as wide as other
-    characters).
+    characters);
+
+  \item \code{\link{output_ansi}} and \code{\link{output_utf8}} test for
+    the output connections capabilities.
 }
 
 For a complete list of functions, use \code{library(help = "utf8")}.

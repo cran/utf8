@@ -23,6 +23,8 @@
 #include "utf8lite/src/utf8lite.h"
 
 #define RUTF8_ELLIPSIS "\xE2\x80\xA6" /* U+2026 */
+#define RUTF8_STYLE_CLOSE "\033[0m"
+#define RUTF8_STYLE_CLOSE_SIZE 4
 
 #define CHECK_EVERY 1000
 #define CHECK_INTERRUPT(i) \
@@ -136,14 +138,10 @@ int rutf8_string_rwidth(const struct rutf8_string *str, int flags,
 void rutf8_string_render(struct utf8lite_render *r,
 			 const struct rutf8_string *str,
 			 int width, int quote, enum rutf8_justify_type justify);
-SEXP rutf8_string_lformat(struct utf8lite_render *r,
-			  const struct rutf8_string *str,
-			  int trim, int chars, int width_max,
-			  int quote, int utf8, int flags, int centre);
-SEXP rutf8_string_rformat(struct utf8lite_render *r,
-			  const struct rutf8_string *str,
-			  int trim, int chars, int width_max,
-			  int quote, int utf8, int flags);
+SEXP rutf8_string_format(struct utf8lite_render *r,
+			 const struct rutf8_string *str,
+			 int trim, int chars, enum rutf8_justify_type justify,
+			 int quote, int utf8, int flags, int width_max);
 
 int rutf8_text_width(const struct utf8lite_text *text, int flags);
 int rutf8_text_lwidth(const struct utf8lite_text *text, int flags,
@@ -153,14 +151,10 @@ int rutf8_text_rwidth(const struct utf8lite_text *text, int flags,
 void rutf8_text_render(struct utf8lite_render *r,
 		       const struct utf8lite_text *text,
 		       int width, int quote, enum rutf8_justify_type justify);
-SEXP rutf8_text_lformat(struct utf8lite_render *r,
-			const struct utf8lite_text *text,
-			int trim, int chars, int width_max,
-			int quote, int utf8, int flags, int centre);
-SEXP rutf8_text_rformat(struct utf8lite_render *r,
-			const struct utf8lite_text *text, int trim,
-			int chars, int width_max, int quote,
-			int utf8, int flags);
+SEXP rutf8_text_format(struct utf8lite_render *r,
+		       const struct utf8lite_text *text,
+		       int trim, int chars, enum rutf8_justify_type justify,
+		       int quote, int utf8, int flags, int width_max);
 
 int rutf8_bytes_width(const struct rutf8_bytes *bytes, int flags);
 int rutf8_bytes_lwidth(const struct rutf8_bytes *bytes, int flags,
@@ -171,14 +165,10 @@ void rutf8_bytes_render(struct utf8lite_render *r,
 			const struct rutf8_bytes *bytes,
 			int width_min, int quote,
 			enum rutf8_justify_type justify);
-SEXP rutf8_bytes_lformat(struct utf8lite_render *r,
-			 const struct rutf8_bytes *bytes,
-			 int trim, int chars, int width_max,
-			 int quote, int utf8, int flags, int centre);
-SEXP rutf8_bytes_rformat(struct utf8lite_render *r,
-			 const struct rutf8_bytes *bytes,
-			 int trim, int chars, int width_max, int quote,
-			 int utf8, int flags);
+SEXP rutf8_bytes_format(struct utf8lite_render *r,
+			const struct rutf8_bytes *bytes,
+			int trim, int chars, enum rutf8_justify_type justify,
+			int quote, int utf8, int flags, int width_max);
 
 /* context */
 SEXP rutf8_alloc_context(size_t size, void (*destroy_func)(void *));
@@ -195,13 +185,13 @@ int rutf8_is_render(SEXP x);
 /* printing */
 SEXP rutf8_render_table(SEXP x, SEXP width, SEXP quote, SEXP na_print,
 			SEXP print_gap, SEXP right, SEXP max, SEXP names,
-			SEXP rownames, SEXP display, SEXP style,
-			SEXP linewidth, SEXP utf8);
+			SEXP rownames, SEXP escapes, SEXP display, SEXP style,
+			SEXP utf8, SEXP linewidth);
 
 /* utf8 */
 SEXP rutf8_as_utf8(SEXP x);
 SEXP rutf8_utf8_encode(SEXP x, SEXP width, SEXP quote, SEXP justify,
-		       SEXP display, SEXP style, SEXP utf8);
+		       SEXP escapes, SEXP display, SEXP utf8);
 SEXP rutf8_utf8_format(SEXP x, SEXP trim, SEXP chars, SEXP justify,
 		       SEXP width, SEXP na_encode, SEXP quote,
 		       SEXP na_print, SEXP utf8);
@@ -212,6 +202,7 @@ SEXP rutf8_utf8_width(SEXP x, SEXP encode, SEXP quote, SEXP utf8);
 
 /* utility functions */
 int rutf8_as_justify(SEXP justify);
+const char *rutf8_as_style(SEXP style);
 int rutf8_encodes_utf8(cetype_t ce);
 const char *rutf8_translate_utf8(SEXP x);
 

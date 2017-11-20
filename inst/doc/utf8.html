@@ -193,7 +193,7 @@ f ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">utf8_print</span>(<span class="kw">intToUtf8</span>(<span class="dv">0x1f600</span> <span class="op">+</span><span class="st"> </span><span class="dv">0</span><span class="op">:</span><span class="dv">79</span>), <span class="dt">chars =</span> <span class="dv">500</span>) <span class="co"># increase character limit</span></code></pre></div>
 <pre><code>[1] &quot;😀​😁​😂​😃​😄​😅​😆​😇​😈​😉​😊​😋​😌​😍​😎​😏​😐​😑​😒​😓​😔​😕​😖​😗​😘​😙​😚​😛​😜​😝​😞​😟​😠​😡​😢​😣​😤​😥​😦​😧​😨​😩​😪​😫​😬​😭​😮​😯​😰​😱​😲​😳​😴​😵​😶​😷​😸​😹​😺​😻​😼​😽​😾​😿​🙀​🙁​🙂​🙃​🙄​🙅​🙆​🙇​🙈​🙉​🙊​🙋​🙌​🙍​🙎​🙏​&quot;</code></pre>
 <p>(Characters with codes above 0xffff, including most emoji, are not supported on Windows.)</p>
-<p><em>Corpus</em> provides the following utilities for validating, formatting, and printing UTF-8 characters:</p>
+<p>The <em>utf8</em> package provides the following utilities for validating, formatting, and printing UTF-8 characters:</p>
 <ul>
 <li><p><code>as_utf8()</code> attempts to convert character data to UTF-8, throwing an error if the data is invalid;</p></li>
 <li><p><code>utf8_valid()</code> tests whether character data is valid according to its declared encoding;</p></li>
@@ -203,7 +203,7 @@ f ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ</code></pre>
 <li><p><code>utf8_print()</code> prints UTF-8 character data to the screen;</p></li>
 <li><p><code>utf8_width()</code> measures the display with of UTF-8 character strings (many emoji and East Asian characters are twice as wide as other characters).</p></li>
 </ul>
-<p><em>Corpus</em> does not provide a method to translate from another encoding to UTF-8 as the <code>iconv()</code> function from base R already serves this purpose.</p>
+<p>The package does not provide a method to translate from another encoding to UTF-8 as the <code>iconv()</code> function from base R already serves this purpose.</p>
 </div>
 </div>
 <div id="translating-to-utf-8" class="section level2">

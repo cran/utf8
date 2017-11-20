@@ -156,5 +156,16 @@ as_style <- function(name, value)
     if (!grepl("^[0-9;]*$", value)) {
         stop(sprintf("'%s' must be a valid ANSI SGR parameter string", name))
     }
+    if (nchar(value) >= 128) {
+        stop(sprintf("'%s' must have length below 128 characters", name))
+    }
     value
+}
+
+as_output_utf8 <- function(name, value)
+{
+    if (is.null(value)) {
+        return(output_utf8())
+    }
+    as_option(name, value)
 }

@@ -7,8 +7,8 @@
 \usage{
 utf8_print(x, chars = NULL, quote = TRUE, na.print = NULL,
            print.gap = NULL, right = FALSE, max = NULL,
-           names = NULL, rownames = NULL, display = TRUE,
-           style = TRUE, ...)
+           names = NULL, rownames = NULL, escapes = NULL,
+           display = TRUE, style = TRUE, utf8 = NULL, ...)
 }
 \arguments{
     \item{x}{character object.}
@@ -46,13 +46,20 @@ utf8_print(x, chars = NULL, quote = TRUE, na.print = NULL,
     \item{rownames}{a character string specifying the display style for
         the row names, as an ANSI SGR parameter string.}
 
+    \item{escapes}{a character string specifying the display style for
+        the backslash escapes, as an ANSI SGR parameter string.}
+
     \item{display}{logical scalar indicating whether to optimize the
         encoding for display, not byte-for-byte data transmission.}
 
     \item{style}{logical scalar indicating whether to apply ANSI
-        terminal escape codes to style the output.  Ignore when
-        \code{isatty(stdout())} is \code{FALSE}, unless printing
-        without output redirection from RStudio v1.1 or later.}
+        terminal escape codes to style the output.  Ignored when
+        \code{output_ansi()} is \code{FALSE}.}
+
+    \item{utf8}{logical scalar indicating whether to optimize results
+        for a UTF-8 capable display, or \code{NULL} to set as the
+        result of \code{output_utf8()}. Ignored when \code{output_utf8()}
+        is \code{FALSE}.}
 
     \item{...}{further arguments passed from other methods. Ignored.}
 }
@@ -60,9 +67,9 @@ utf8_print(x, chars = NULL, quote = TRUE, na.print = NULL,
     \code{utf8_print} prints a character object after formatting it with
     \code{utf8_format}.
 
-    For ANSI terminal output (non-Windows only), you can style the row and
-    column names with the \code{rownames} and \code{names} parameters,
-    specifying an ANSI SGR parameter string; see
+    For ANSI terminal output (when \code{output_ansi()} is \code{TRUE}),
+    you can style the row and column names with the \code{rownames} and
+    \code{names} parameters, specifying an ANSI SGR parameter string; see
     \url{https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters}.
 }
 \value{

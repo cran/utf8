@@ -43,6 +43,8 @@ struct style {
 	const char *rownames;
 	int rownames_len;
 	int right;
+	const char *esc_open;
+	const char *esc_close;
 };
 
 
@@ -97,7 +99,8 @@ static void render_cell(struct utf8lite_render *r, const struct style *s,
 	const char *sgr;
 	int err = 0, w, pad, right, quote, old, nsgr;
 
-	old = utf8lite_render_set_flags(r, flags_get(&s->flags, t));
+	old = r->flags;
+	TRY(utf8lite_render_set_flags(r, flags_get(&s->flags, t)));
 	quote = r->flags & UTF8LITE_ESCAPE_DQUOTE;
 	right = (t == CELL_ROWNAME) ? 0 : s->right;
 	sgr = sgr_get(s, t, &nsgr);
@@ -106,28 +109,35 @@ static void render_cell(struct utf8lite_render *r, const struct style *s,
 	pad = width - w;
 
 	if (sgr) {
-		TRY(utf8lite_render_raw(r, "\x1b[", 2));
 		TRY(utf8lite_render_raw(r, sgr, nsgr));
-		TRY(utf8lite_render_raw(r, "m", 1));
 	}
 
 	if (right) {
 		TRY(utf8lite_render_chars(r, ' ', pad));
 	}
 
+	if (t == CELL_ENTRY) {
+		TRY(utf8lite_render_set_style(r, s->esc_open, s->esc_close));
+	}
+
 	rutf8_string_init(&str, sx);
 	rutf8_string_render(r, &str, 0, quote, RUTF8_JUSTIFY_NONE);
+
+	if (t == CELL_ENTRY) {
+		TRY(utf8lite_render_set_style(r, NULL, NULL));
+	}
 
 	if (!right) {
 		TRY(utf8lite_render_chars(r, ' ', pad));
 	}
 
 	if (sgr) {
-		TRY(utf8lite_render_raw(r, "\x1b[0m", 4));
+		TRY(utf8lite_render_raw(r, RUTF8_STYLE_CLOSE,
+					RUTF8_STYLE_CLOSE_SIZE));
 	}
+	TRY(utf8lite_render_set_flags(r, old));
 exit:
 	CHECK_ERROR(err);
-	utf8lite_render_set_flags(r, old);
 }
 
 
@@ -238,11 +248,11 @@ exit:
 
 SEXP rutf8_render_table(SEXP sx, SEXP swidth, SEXP squote, SEXP sna_print,
 			SEXP sprint_gap, SEXP sright, SEXP smax,
-			SEXP snames, SEXP srownames, SEXP sdisplay,
-			SEXP sstyle, SEXP slinewidth, SEXP sutf8)
+			SEXP snames, SEXP srownames, SEXP sescapes,
+			SEXP sdisplay, SEXP sstyle, SEXP sutf8,
+			SEXP slinewidth)
 {
-	SEXP ans, names, rownames, na_print, str, srender, elt, dim_names,
-	     row_names, col_names;
+	SEXP ans, na_print, str, srender, elt, dim_names, row_names, col_names;
 	struct utf8lite_render *render;
 	struct style s;
 	R_xlen_t ix, nx;
@@ -268,8 +278,8 @@ SEXP rutf8_render_table(SEXP sx, SEXP swidth, SEXP squote, SEXP sna_print,
 	max = INTEGER(smax)[0];
 	display = LOGICAL(sdisplay)[0] == TRUE;
 	style = LOGICAL(sstyle)[0] == TRUE;
-	linewidth = INTEGER(slinewidth)[0];
 	utf8 = LOGICAL(sutf8)[0] == TRUE;
+	linewidth = INTEGER(slinewidth)[0];
 
 	s.flags.entry = (UTF8LITE_ESCAPE_CONTROL | UTF8LITE_ENCODE_C);
 	if (quote) {
@@ -280,16 +290,11 @@ SEXP rutf8_render_table(SEXP sx, SEXP swidth, SEXP squote, SEXP sna_print,
                 s.flags.entry |= UTF8LITE_ENCODE_EMOJIZWSP;
         }
 	if (style) {
-		s.flags.entry |= UTF8LITE_ENCODE_ESCFAINT;
-		if (snames != R_NilValue) {
-			PROTECT(names = STRING_ELT(snames, 0)); nprot++;
-			s.names = CHAR(names);
-			s.names_len = LENGTH(names);
+		if ((s.names = rutf8_as_style(snames))) {
+			s.names_len = strlen(s.names);
 		}
-		if (srownames != R_NilValue) {
-			PROTECT(rownames = STRING_ELT(srownames, 0)); nprot++;
-			s.rownames = CHAR(rownames);
-			s.rownames_len = LENGTH(rownames);
+		if ((s.rownames = rutf8_as_style(srownames))) {
+			s.rownames_len = strlen(s.rownames);
 		}
 	}
         if (!utf8) {
@@ -299,11 +304,17 @@ SEXP rutf8_render_table(SEXP sx, SEXP swidth, SEXP squote, SEXP sna_print,
         s.flags.entry |= UTF8LITE_ESCAPE_EXTENDED;
 #endif
 	s.flags.na = s.flags.entry & ~UTF8LITE_ESCAPE_DQUOTE;
-	s.flags.name = s.flags.na & ~UTF8LITE_ENCODE_ESCFAINT;
+	s.flags.name = s.flags.na;
 	s.flags.rowname = s.flags.name;
 
 	PROTECT(srender = rutf8_alloc_render(0)); nprot++;
 	render = rutf8_as_render(srender);
+
+	if (style) {
+		if ((s.esc_open = rutf8_as_style(sescapes))) {
+			s.esc_close = RUTF8_STYLE_CLOSE;
+		}
+	}
 
 	namewidth = 0;
 	if (row_names == R_NilValue) {

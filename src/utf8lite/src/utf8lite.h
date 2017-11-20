@@ -776,10 +776,8 @@ enum utf8lite_encode_type {
 	UTF8LITE_ENCODE_JSON = (1 << 5),/**< JSON-compatible escapes */
 	UTF8LITE_ENCODE_EMOJIZWSP = (1 << 6),/**< put ZWSP after emoji */
 	UTF8LITE_ENCODE_RMDI = (1 << 7),/**< remove default ignorables */
-	UTF8LITE_ENCODE_AMBIGWIDE = (1 << 8),/**< assume that ambiguous-width
+	UTF8LITE_ENCODE_AMBIGWIDE = (1 << 8)/**< assume that ambiguous-width
 					       characters are wide */
-	UTF8LITE_ENCODE_ESCFAINT = (1 << 9)/** use ANSI terminal controls
-					      to make escapes appear faint */
 };
 
 /**
@@ -822,6 +820,16 @@ struct utf8lite_render {
 	int newline_length;	/**< the length in bytes of the newline string,
 				  not including the null terminator */
 
+	const char *style_open;	/**< the escape style graphic parameters,
+				  for styling backslash escapes */
+	const char *style_close;/**< the escape style graphic parameters,
+				  for restoring state after styling a
+				  backslash escapes */
+	int style_open_length;	/**< length in bytes of the style_open string,
+				  not including the null terminator */
+	int style_close_length;	/**< length in bytes of the style_close string,
+				  not including the null terminator */
+
 	int indent;		/**< the current indent level */
 	int needs_indent;	/**< whether to indent before the next
 				  character */
@@ -862,7 +870,7 @@ void utf8lite_render_clear(struct utf8lite_render *r);
  * \param r the render object
  * \param flags a bit mask of #utf8lite_escape_type values
  *
- * \returns the old escape flags
+ * \returns 0 on success
  */
 int utf8lite_render_set_flags(struct utf8lite_render *r, int flags);
 
@@ -874,9 +882,9 @@ int utf8lite_render_set_flags(struct utf8lite_render *r, int flags);
  * \param r the render object
  * \param tab the tab string (null terminated)
  *
- * \returns the old tab string
+ * \returns 0 on success
  */
-const char *utf8lite_render_set_tab(struct utf8lite_render *r, const char *tab);
+int utf8lite_render_set_tab(struct utf8lite_render *r, const char *tab);
 
 /**
  * Set the new line string.  The client must not free the passed-in newline
@@ -886,10 +894,23 @@ const char *utf8lite_render_set_tab(struct utf8lite_render *r, const char *tab);
  * \param r the render object
  * \param newline the newline string (null terminated)
  *
- * \returns the old newline string
+ * \returns 0 on success
  */
-const char *utf8lite_render_set_newline(struct utf8lite_render *r,
-					const char *newline);
+int utf8lite_render_set_newline(struct utf8lite_render *r, const char *newline);
+
+/**
+ * Set the escape style strings. The client must not free the passed
+ * in strings until the render object is destroyed or new style
+ * strings get set.
+ *
+ * \param r the render object
+ * \param open the string to render before a backslash escape.
+ * \param close the string to render after a backslash escape.
+ *
+ * \returns 0 on success
+ */
+int utf8lite_render_set_style(struct utf8lite_render *r,
+			      const char *open, const char *close);
 
 /**
  * Increase or decrease the indent level.

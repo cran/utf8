@@ -7,7 +7,7 @@ Format a character object for UTF-8 printing.
 \usage{
 utf8_format(x, trim = FALSE, chars = NULL, justify = "left",
             width = NULL, na.encode = TRUE, quote = FALSE,
-            na.print = NULL, print.gap = NULL, ...)
+            na.print = NULL, print.gap = NULL, utf8 = NULL, ...)
 }
 \arguments{
 \item{x}{character object.}
@@ -19,9 +19,9 @@ utf8_format(x, trim = FALSE, chars = NULL, justify = "left",
     character units to display.  Wide characters like emoji take
     two character units; combining marks and default ignorables
     take none. Longer strings get truncated and suffixed or prefixed
-    with an ellipsis (\code{"..."} in C locale, \code{"\u2026"} in
-    others). Set to \code{NULL} to limit output to the line width
-    as determined by \code{getOption("width")}.}
+    with an ellipsis (\code{"..."} when \code{output_utf8()} is false,
+    \code{"\u2026"} otherwise). Set to \code{NULL} to limit output to
+    the line width as determined by \code{getOption("width")}.}
 
 \item{justify}{justification; one of \code{"left"}, \code{"right"},
     \code{"centre"}, or \code{"none"}. Can be abbreviated.}
@@ -43,6 +43,10 @@ utf8_format(x, trim = FALSE, chars = NULL, justify = "left",
 \item{print.gap}{non-negative integer (or \code{NULL}) giving the
     number of spaces in gaps between columns; set to \code{NULL}
     or \code{1} for a single space.}
+
+\item{utf8}{logical scalar indicating whether to format for a UTF-8
+    capable display (ASCII-only otherwise), or \code{NULL} to
+    format for output capabilities as determined by \code{output_utf8()}.}
 
 \item{...}{further arguments passed from other methods. Ignored.}
 }

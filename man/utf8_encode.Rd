@@ -6,8 +6,8 @@
     quotes or spaces, adjusting the width for display.
 }
 \usage{
-utf8_encode(x, width = 0L, quote = FALSE, justify = "left", display = FALSE,
-            style = FALSE)
+utf8_encode(x, width = 0L, quote = FALSE, justify = "left", escapes = NULL,
+            display = FALSE, utf8 = NULL)
 }
 \arguments{
     \item{x}{character object.}
@@ -21,12 +21,17 @@ utf8_encode(x, width = 0L, quote = FALSE, justify = "left", display = FALSE,
     \item{justify}{justification; one of \code{"left"}, \code{"right"},
         \code{"centre"}, or \code{"none"}. Can be abbreviated.}
 
+    \item{escapes}{a character string specifying the display style for
+        the backslash escapes, as an ANSI SGR parameter string,
+        or NULL for no styling.}
+
     \item{display}{logical scalar indicating whether to optimize the
         encoding for display, not byte-for-byte data transmission.}
 
-    \item{style}{logical scalar indicating whether to insert ANSI terminal
-        escape codes to display backslash escapes in faint (decreased
-        intensity) style.}
+    \item{utf8}{logical scalar indicating whether to encode for a UTF-8
+        capable display (ASCII-only otherwise), or \code{NULL} to
+        encode for output capabilities as determined by
+        \code{output_utf8()}.}
 }
 \details{
     \code{utf8_encode} encodes a character object for printing on a UTF-8
@@ -34,8 +39,9 @@ utf8_encode(x, width = 0L, quote = FALSE, justify = "left", display = FALSE,
     characters. When \code{display = TRUE}, the function optimizes the
     encoding for display by removing default ignorable characters (soft
     hyphens, zero-width spaces, etc.) and placing zero-width spaces after
-    wide emoji. When \code{LC_CTYPE = "C"}, the function escapes all
-    non-ASCII characters and gives the same results on all platforms.
+    wide emoji. When \code{output_utf8()} is \code{FALSE} the function
+    escapes all non-ASCII characters and gives the same results on all
+    platforms.
 }
 \value{
     A character object with the same attributes as \code{x} but with
@@ -51,4 +57,7 @@ Encoding(x) <- c("UTF-8", "UTF-8", "bytes")
 
 # encoding
 utf8_encode(x)
+
+# add style to the escapes
+cat(utf8_encode("hello\nstyled\\\\world", escapes = "1"), "\n")
 }

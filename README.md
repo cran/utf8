@@ -53,7 +53,7 @@ function alerts you if the input text has the wrong declared encoding:
 
 
 ```r
-# second entry is encoded in latin-1, but declared as UTF-8, so
+# second entry is encoded in latin-1, but declared as UTF-8
 x <- c("fa\u00E7ile", "fa\xE7ile", "fa\xC3\xA7ile")
 Encoding(x) <- c("UTF-8", "UTF-8", "bytes")
 as_utf8(x) # fails
@@ -81,6 +81,12 @@ utf8_normalize(angstrom) == "\u00c5"
 # perform full Unicode case-folding
 utf8_normalize("Größe", map_case = TRUE)
 #> [1] "grösse"
+
+# apply compatibility maps to NFKC normal form
+# (example from https://twitter.com/aprilarcus/status/367557195186970624)
+utf8_normalize("𝖸𝗈 𝐔𝐧𝐢𝐜𝐨𝐝𝐞 𝗅 𝗁𝖾𝗋𝖽 𝕌 𝗅𝗂𝗄𝖾 𝑡𝑦𝑝𝑒𝑓𝑎𝑐𝑒𝑠 𝗌𝗈 𝗐𝖾 𝗉𝗎𝗍 𝗌𝗈𝗆𝖾 𝚌𝚘𝚍𝚎𝚙𝚘𝚒𝚗𝚝𝚜 𝗂𝗇 𝗒𝗈𝗎𝗋 𝔖𝔲𝔭𝔭𝔩𝔢𝔪𝔢𝔫𝔱𝔞𝔯𝔶 𝔚𝔲𝔩𝔱𝔦𝔩𝔦𝔫𝔤𝔳𝔞𝔩 𝔓𝔩𝔞𝔫𝔢 𝗌𝗈 𝗒𝗈𝗎 𝖼𝖺𝗇 𝓮𝓷𝓬𝓸𝓭𝓮 𝕗𝕠𝕟𝕥𝕤 𝗂𝗇 𝗒𝗈𝗎𝗋 𝒇𝒐𝒏𝒕𝒔.",
+               map_compat = TRUE)
+#> [1] "Yo Unicode l herd U like typefaces so we put some codepoints in your Supplementary Wultilingval Plane so you can encode fonts in your fonts."
 ```
 
 ### Print emoji
@@ -107,12 +113,16 @@ Citation
 
 Cite *utf8* with the following BibTeX entry:
 
-    @Manual{,
-        title = {utf8: UTF-8 Text Processing},
-        author = {Patrick O. Perry},
-        year = {2017},
-        note = {R package version 1.0.0},
-    }
+
+```
+@Manual{,
+  title = {utf8: Unicode Text Processing},
+  author = {Patrick O. Perry},
+  year = {2017},
+  note = {R package version 1.0.0},
+  url = {https://CRAN.R-project.org/package=utf8},
+}
+```
 
 
 Contributing
@@ -137,6 +147,7 @@ and if you choose to contribute, you must adhere to its terms.
 [apache-badge]: https://img.shields.io/badge/License-Apache%202.0-blue.svg "Apache License, Version 2.0"
 [appveyor]: https://ci.appveyor.com/project/patperry/r-utf8/branch/master "Continuous Integration (Windows)"
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/github/patperry/r-utf8?branch=master&svg=true "Continuous Inegration (Windows)"
+[building]: #development-version "Building from Source"
 [codecov]: https://codecov.io/github/patperry/r-utf8?branch=master "Code Coverage"
 [codecov-badge]: https://codecov.io/github/patperry/r-utf8/coverage.svg?branch=master "Code Coverage"
 [conduct]: https://github.com/patperry/r-utf8/blob/master/CONDUCT.md "Contributor Code of Conduct"

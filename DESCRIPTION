@@ -1,5 +1,5 @@
 Package: utf8
-Version: 1.0.0
+Version: 1.1.0
 Title: Unicode Text Processing
 Authors@R: c(
   person(c("Patrick", "O."), "Perry",
@@ -18,9 +18,9 @@ LazyData: Yes
 Encoding: UTF-8
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2017-11-06 21:00:56 UTC; ptrck
+Packaged: 2017-11-20 13:21:40 UTC; ptrck
 Author: Patrick O. Perry [aut, cph, cre],
   Unicode, Inc. [cph, dtc] (Unicode Character Database)
 Maintainer: Patrick O. Perry <pperry@stern.nyu.edu>
 Repository: CRAN
-Date/Publication: 2017-11-07 18:26:59 UTC
+Date/Publication: 2017-11-20 14:06:37 UTC
