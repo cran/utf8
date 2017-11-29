@@ -1,7 +1,7 @@
-1924b03931f977dfe74a96fa1acfc9bc *DESCRIPTION
+bbc9a1526c005b525f523aef0d699b62 *DESCRIPTION
 3b83ef96387f14655fc854ddc3c6bd57 *LICENSE
 9eb610e029fc704406b2e7ba88b2038a *NAMESPACE
-3342cd6ad56854649b67c91967f6cc4c *NEWS
+cf3b1834572543ab577a6a5a9f7fc66e *NEWS
 efe4676d073d250ff3da3ea2d6e4b6b2 *R/coerce.R
 a763975293a72259c6836019d484dc34 *R/output.R
 2a5eda5bc43c3c9dea1cb102979317de *R/utf8.R
@@ -9,7 +9,7 @@ ae802a9d21ab5c8d298ac005700eacc0 *R/utf8_encode.R
 6b8dc5f7bd14308f204c265faf0e1bcb *R/utf8_format.R
 ac9f046d90643da5a70aad5d1100fdca *R/utf8_print.R
 3c072aa1f51826f8532a4d9aa08984a5 *R/util.R
-2d6ff87a3094d461748cb2bcf00eee80 *README.md
+f4024cb6141863957ee4c4d9996d845d *README.md
 bb97d231e2975c26b2b3490ebe820829 *build/vignette.rds
 101804d9a1d4b7cbc97e60643eb0f6d0 *inst/doc/utf8.Rmd
 b39e7f322e1f67738dd4b405e53477b8 *inst/doc/utf8.html
@@ -22,7 +22,7 @@ d02a927a2cc0337c4ae6e036b4409bde *man/utf8-package.Rd
 a995d70064a39528c9165a1a62354b3b *man/utf8_print.Rd
 7c88586c6da59199e495250205205799 *man/utf8_width.Rd
 a735d462b28b9be2ac7a556f09d8528a *src/Makevars
-fb17be51c7954f758ab818db7563e9bf *src/as_utf8.c
+b6faeac929fad8c4b8de3c152fa7bbbe *src/as_utf8.c
 bf237838707852598bb625705d815423 *src/bytes.c
 ffe6da8fdb6855eb0feb2fbff76153cd *src/context.c
 b2601eb4ddeb43f5e5f9fc393c063e77 *src/init.c
