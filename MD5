@@ -1,7 +1,7 @@
-bbc9a1526c005b525f523aef0d699b62 *DESCRIPTION
+6d5f02b194656fc60aed9123d6317bcf *DESCRIPTION
 3b83ef96387f14655fc854ddc3c6bd57 *LICENSE
 9eb610e029fc704406b2e7ba88b2038a *NAMESPACE
-cf3b1834572543ab577a6a5a9f7fc66e *NEWS
+b05b6d15b3b17b6d4e9db021bc2b32be *NEWS
 efe4676d073d250ff3da3ea2d6e4b6b2 *R/coerce.R
 a763975293a72259c6836019d484dc34 *R/output.R
 2a5eda5bc43c3c9dea1cb102979317de *R/utf8.R
@@ -32,7 +32,7 @@ b2601eb4ddeb43f5e5f9fc393c063e77 *src/init.c
 25107c5d36255e04b47a13c32f8322dd *src/string.c
 728c035af705e320b55a156b5efe19bc *src/text.c
 cd52038d86857f26266092d348355153 *src/utf8_encode.c
-1b540071172e66f390b2503a68ed6c2f *src/utf8_format.c
+a084e3517b91d0989a7eb306f6d5141f *src/utf8_format.c
 5f1ffb2d580a185b4b361099e88a0012 *src/utf8_normalize.c
 2dc5f330b2053f4d14b0308bc07c34be *src/utf8_valid.c
 9c90631ae5759f0c919ce58731d663cd *src/utf8_width.c
@@ -89,7 +89,7 @@ a0450b7c980b18e4fddda73a17fab113 *src/utf8lite/util/table-graphbreak.c
 3e2c91ecee1bf14d2e22b90599ed398a *tests/testthat/helper-locale.R
 fc4821538e0072d27b46f410ff090c26 *tests/testthat/helper-options.R
 09e11a66cd1ce696ebbbd3a0814e7b36 *tests/testthat/test-utf8_encode.R
-2a618a962c050968632b048c832ece13 *tests/testthat/test-utf8_format.R
+b1da5f7ee17c6bb9b56f5d67955dceb2 *tests/testthat/test-utf8_format.R
 e05c502fae916cd6f841c1bb85cc3c0e *tests/testthat/test-utf8_normalize.R
 e82f65a4de6525519f9deec77948b342 *tests/testthat/test-utf8_print.R
 8e2c5ecf2df6417f7bbeac71fd0e0a48 *tests/testthat/test-utf8_valid.R
