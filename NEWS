@@ -1,5 +1,20 @@
-utf8 1.1.2
+utf8 1.1.3
 ==========
+
+MINOR IMPROVEMENTS
+
+  * Make output_utf8() always return TRUE on Windows, so that characters
+    in the user's native locale don't get escaped by utf8_encode(). The
+    downside of this change is that on Windows, utf8_width() reports the
+    wrong values for characters outside the user's locale when stdout()
+    is redirected by knitr or another process.
+
+  * When truncating long strings strings via utf8_format(), use an ellipsis
+    that is printable in the user's native locale ("\u2026" or "...").
+
+
+utf8 1.1.2 (2017-12-14)
+=======================
 
 BUG FIXES
 
