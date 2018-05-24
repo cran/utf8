@@ -118,9 +118,9 @@ Cite *utf8* with the following BibTeX entry:
 @Manual{,
   title = {utf8: Unicode Text Processing},
   author = {Patrick O. Perry},
-  year = {2017},
-  note = {R package version 1.1.2},
-  url = {https://CRAN.R-project.org/package=utf8},
+  year = {2018},
+  note = {R package version 1.1.4},
+  url = {https://github.com/patperry/r-utf8},
 }
 ```
 
