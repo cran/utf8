@@ -13,23 +13,23 @@
 #  limitations under the License.
 
 
-with_rethrow <- function(expr)
-{
-    parentcall <- sys.call(-1)
-    eval(envir = parent.frame(),
-        withCallingHandlers(expr,
-            error = function(e, call = parentcall) {
-                e$call <- call
-                stop(e)
-            },
-            warning = function(w, call = parentcall) {
-                w$call <- call
-                warning(w)
-                invokeRestart("muffleWarning")
-            },
-            message = function(m, call = parentcall) {
-                m$call <- call
-            }
-        )
+with_rethrow <- function(expr) {
+  parentcall <- sys.call(-1)
+  eval(
+    envir = parent.frame(),
+    withCallingHandlers(expr,
+      error = function(e, call = parentcall) {
+        e$call <- call
+        stop(e)
+      },
+      warning = function(w, call = parentcall) {
+        w$call <- call
+        warning(w)
+        invokeRestart("muffleWarning")
+      },
+      message = function(m, call = parentcall) {
+        m$call <- call
+      }
     )
+  )
 }

@@ -751,6 +751,61 @@ void utf8lite_graphscan_skip(struct utf8lite_graphscan *scan);
 /**@}*/
 
 /**
+ * \defgroup wordscan Word boundaries
+ * @{
+ */
+
+/**
+ * A word scanner, for iterating over the words in a text. Word boundaries
+ * are determined according to [UAX #29, Unicode Text Segmentation][uax29].
+ * You can test the word boundary rules in an interactive
+ * [online demo][demo].
+ *
+ * [demo]: http://unicode.org/cldr/utility/breaks.jsp
+ * [uax29]: http://unicode.org/reports/tr29/
+ */
+struct utf8lite_wordscan {
+	int32_t code;		/**< next code point */
+	size_t attr;		/**< next code's attributes */
+	int prop;		/**< next code's word break property */
+	const uint8_t *ptr;	/**< next code's start */
+
+	struct utf8lite_text_iter iter;	/**< an iterator over the input,
+				  positioned past next code */
+	int iter_prop;		/**< iterator code's word break property */
+	const uint8_t *iter_ptr;/**< iterator code's start */
+
+	struct utf8lite_text current;	/**< the current word */
+};
+
+/**
+ * Create a word scanner over a text object.
+ *
+ * \param scan the scanner to initialize
+ * \param text the text
+ */
+void utf8lite_wordscan_make(struct utf8lite_wordscan *scan,
+			    const struct utf8lite_text *text);
+
+/**
+ * Advance a scanner to the next word.
+ *
+ * \param scan the scanner
+ *
+ * \returns nonzero on success, zero if at the end of the text
+ */
+int utf8lite_wordscan_advance(struct utf8lite_wordscan *scan);
+
+/**
+ * Reset a scanner to the beginning of the text.
+ *
+ * \param scan the scanner
+ */
+void utf8lite_wordscan_reset(struct utf8lite_wordscan *scan);
+
+/**@}*/
+
+/**
  * \defgroup render Text rendering
  * @{
  */

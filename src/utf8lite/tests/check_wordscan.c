@@ -20,8 +20,8 @@
 #include "../src/utf8lite.h"
 #include "testutil.h"
 
-#define GRAPH_BREAK_TEST "data/ucd/auxiliary/GraphemeBreakTest.txt"
-struct utf8lite_graphscan scan;
+#define WORD_BREAK_TEST "data/ucd/auxiliary/WordBreakTest.txt"
+struct utf8lite_wordscan scan;
 
 
 void setup_scan(void)
@@ -38,92 +38,117 @@ void teardown_scan(void)
 
 void start(const struct utf8lite_text *text)
 {
-	utf8lite_graphscan_make(&scan, text);
+	utf8lite_wordscan_make(&scan, text);
 }
 
 
 const struct utf8lite_text *next(void)
 {
-	struct utf8lite_text *graph;
-	if (!utf8lite_graphscan_advance(&scan)) {
+	struct utf8lite_text *word;
+	if (!utf8lite_wordscan_advance(&scan)) {
 		return NULL;
 	}
-	graph = alloc(sizeof(*graph));
-	*graph = scan.current.text;
-	return graph;
+	word = alloc(sizeof(*word));
+	*word = scan.current;
+	return word;
 }
 
 
-const struct utf8lite_text *prev(void)
+START_TEST(test_figure1)
 {
-	struct utf8lite_text *graph;
-	if (!utf8lite_graphscan_retreat(&scan)) {
-		return NULL;
-	}
-	graph = alloc(sizeof(*graph));
-	*graph = scan.current.text;
-	return graph;
-}
-
-
-START_TEST(test_empty)
-{
-	start(S(""));
-	ck_assert(next() == NULL);
-	ck_assert(next() == NULL);
-	ck_assert(prev() == NULL);
-	ck_assert(prev() == NULL);
-}
-END_TEST
-
-
-START_TEST(test_single)
-{
-	start(S("x"));
-	ck_assert(prev() == NULL);
-	assert_text_eq(next(), S("x"));
-	ck_assert(prev() == NULL);
-	assert_text_eq(next(), S("x"));
-	ck_assert(next() == NULL);
-	ck_assert(next() == NULL);
-	assert_text_eq(prev(), S("x"));
-	ck_assert(prev() == NULL);
-	ck_assert(prev() == NULL);
-}
-END_TEST
-
-
-START_TEST(test_emoji_modifier)
-{
-	// This is an Extended_Pictographic followed by Extend
-	start(JS("\\uD83D\\uDE0A\\uD83C\\uDFFB")); // U+1F60A U+1F3FB
-	assert_text_eq(next(), JS("\\uD83D\\uDE0A\\uD83C\\uDFFB"));
+	// Test Figure 1 from http://www.unicode.org/reports/tr29/
+	start(S("The quick (\"brown\") fox can't jump 32.3 feet, right?"));
+	assert_text_eq(next(), S("The"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("quick"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("("));
+	assert_text_eq(next(), S("\""));
+	assert_text_eq(next(), S("brown"));
+	assert_text_eq(next(), S("\""));
+	assert_text_eq(next(), S(")"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("fox"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("can't"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("jump"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("32.3"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("feet"));
+	assert_text_eq(next(), S(","));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("right"));
+	assert_text_eq(next(), S("?"));
 	ck_assert(next() == NULL);
 }
 END_TEST
 
-
-START_TEST(test_emoji_zwj_sequence)
+START_TEST(test_quote)
 {
-	// \U0001F469\u200D\u2764\uFE0F\u200D\U0001F48B\u200D\U0001F469
-	start(JS("\\ud83d\\udc69\\u200d\\u2764\\ufe0f\\u200d\\ud83d\\udc8b\\u200d\\ud83d\\udc69"));
-
-	assert_text_eq(next(), JS("\\ud83d\\udc69\\u200d\\u2764\\ufe0f\\u200d\\ud83d\\udc8b\\u200d\\ud83d\\udc69"));
-
+	start(S("both 'single' and \"double\"."));
+	assert_text_eq(next(), S("both"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("'"));
+	assert_text_eq(next(), S("single"));
+	assert_text_eq(next(), S("'"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("and"));
+	assert_text_eq(next(), S(" "));
+	assert_text_eq(next(), S("\""));
+	assert_text_eq(next(), S("double"));
+	assert_text_eq(next(), S("\""));
+	assert_text_eq(next(), S("."));
 	ck_assert(next() == NULL);
 }
 END_TEST
 
 
-// Unicode Grapheme Break Test
-// http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/GraphemeBreakTest.txt
+START_TEST(test_extendnumlet)
+{
+	start(S("_"));
+	assert_text_eq(next(), S("_"));
+
+	start(S("__"));
+	assert_text_eq(next(), S("__"));
+
+	start(S("___"));
+	assert_text_eq(next(), S("___"));
+
+	start(JS("\\u202f"));
+	assert_text_eq(next(), JS("\\u202f"));
+
+	start(JS("\\u202f\\u202f"));
+	assert_text_eq(next(), JS("\\u202f\\u202f"));
+
+	start(JS("\\u202f_"));
+	assert_text_eq(next(), JS("\\u202f_"));
+
+	start(S("_1"));
+	assert_text_eq(next(), S("_1"));
+
+	start(S("__1"));
+	assert_text_eq(next(), S("__1"));
+
+	start(S("_A"));
+	assert_text_eq(next(), S("_A"));
+
+	start(S("__A"));
+	assert_text_eq(next(), S("__A"));
+}
+END_TEST
+
+
+// Unicode Word Break Test
+// http://www.unicode.org/Public/UCD/latest/ucd/auxiliary/WordBreakTest.txt
 struct unitest {
-	char comment[4096];
+	char comment[1024];
 	unsigned line;
 	int is_ascii;
 
 	struct utf8lite_text text;
-	uint8_t buf[4096];
+	uint8_t buf[1024];
 
 	int32_t code[256];
 	int can_break_before[256];
@@ -161,9 +186,9 @@ void setup_unicode(void)
 	int ch, is_ascii;
 
 	setup_scan();
-	file = fopen(GRAPH_BREAK_TEST, "r");
+	file = fopen(WORD_BREAK_TEST, "r");
 	if (!file) {
-		file = fopen("../"GRAPH_BREAK_TEST, "r");
+		file = fopen("../"WORD_BREAK_TEST, "r");
 	}
 
 	nunitest = 0;
@@ -176,7 +201,7 @@ void setup_unicode(void)
 	test->text.ptr = &test->buf[0];
 	dst = test->text.ptr;
 
-	ck_assert_msg(file != NULL, "file '"GRAPH_BREAK_TEST"' not found");
+	ck_assert_msg(file != NULL, "file '"WORD_BREAK_TEST"' not found");
 	while ((ch = fgetc(file)) != EOF) {
 		switch (ch) {
 		case '#':
@@ -206,6 +231,7 @@ void setup_unicode(void)
 				is_ascii = 1;
 				nunitest++;
 				test = &unitests[nunitest];
+				comment = &test->comment[0];
 				test->text.ptr = &test->buf[0];
 				test->comment[0] = '\0';
 				dst = test->text.ptr;
@@ -252,21 +278,19 @@ void setup_unicode(void)
 
 	}
 eof:
-	fclose(file);
 	return;
 inval:
 	fprintf(stderr, "invalid character on line %d\n", line);
+
 	fclose(file);
 }
-
 
 void teardown_unicode(void)
 {
 	teardown_scan();
 }
 
-
-START_TEST(test_unicode_forward)
+START_TEST(test_unicode)
 {
 	struct unitest *test;
 	unsigned i, j;
@@ -274,77 +298,38 @@ START_TEST(test_unicode_forward)
 	for (i = 0; i < nunitest; i++) {
 		test = &unitests[i];
 
-		//fprintf(stderr, "[%u]: ", i);
 		//write_unitest(stderr, test);
-		utf8lite_graphscan_make(&scan, &test->text);
+		utf8lite_wordscan_make(&scan, &test->text);
 
 		for (j = 0; j < test->nbreak; j++) {
 			//fprintf(stderr, "Break %u\n", j);
-			ck_assert(utf8lite_graphscan_advance(&scan));
-			ck_assert(scan.current.text.ptr
-					== test->break_begin[j]);
-			ck_assert(scan.current.text.ptr
-				  + UTF8LITE_TEXT_SIZE(&scan.current.text)
-				  == test->break_end[j]);
+			ck_assert(utf8lite_wordscan_advance(&scan));
+			ck_assert(scan.current.ptr == test->break_begin[j]);
+			ck_assert(scan.current.ptr
+					+ UTF8LITE_TEXT_SIZE(&scan.current)
+					== test->break_end[j]);
 		}
-		ck_assert(!utf8lite_graphscan_advance(&scan));
+		ck_assert(!utf8lite_wordscan_advance(&scan));
 	}
 }
 END_TEST
 
-
-START_TEST(test_unicode_backward)
-{
-	struct unitest *test;
-	unsigned i, j;
-
-	for (i = 0; i < nunitest; i++) {
-		test = &unitests[i];
-
-		//fprintf(stderr, "[%u]: ", i);
-		//write_unitest(stderr, test);
-		utf8lite_graphscan_make(&scan, &test->text);
-		utf8lite_graphscan_skip(&scan);
-		ck_assert(scan.current.text.ptr
-				== test->break_end[test->nbreak]);
-		ck_assert(scan.current.text.attr == 0);
-
-		j = test->nbreak;
-		while (j-- > 0) {
-			//fprintf(stderr, "Break %u\n", j);
-			ck_assert(utf8lite_graphscan_retreat(&scan));
-			ck_assert(scan.current.text.ptr
-					== test->break_begin[j]);
-			ck_assert(scan.current.text.ptr
-				  + UTF8LITE_TEXT_SIZE(&scan.current.text)
-				  == test->break_end[j]);
-		}
-		//fprintf(stderr, "Start\n");
-		ck_assert(!utf8lite_graphscan_retreat(&scan));
-		ck_assert(!utf8lite_graphscan_retreat(&scan));
-	}
-}
-END_TEST
-
-
-Suite *graphscan_suite(void)
+Suite *wordscan_suite(void)
 {
         Suite *s;
         TCase *tc;
 
-        s = suite_create("graphscan");
+        s = suite_create("wordscan");
 	tc = tcase_create("core");
         tcase_add_checked_fixture(tc, setup_scan, teardown_scan);
-        tcase_add_test(tc, test_empty);
-        tcase_add_test(tc, test_single);
-        tcase_add_test(tc, test_emoji_modifier);
-	tcase_add_test(tc, test_emoji_zwj_sequence);
+        tcase_add_test(tc, test_figure1);
+        tcase_add_test(tc, test_quote);
+        tcase_add_test(tc, test_extendnumlet);
         suite_add_tcase(s, tc);
 
-        tc = tcase_create("Unicode GraphemeBreakTest.txt");
+        tc = tcase_create("Unicode WordBreakTest.txt");
         tcase_add_checked_fixture(tc, setup_unicode, teardown_unicode);
-        tcase_add_test(tc, test_unicode_forward);
-        tcase_add_test(tc, test_unicode_backward);
+        tcase_add_test(tc, test_unicode);
         suite_add_tcase(s, tc);
 
 	return s;
@@ -357,7 +342,7 @@ int main(void)
         Suite *s;
         SRunner *sr;
 
-        s = graphscan_suite();
+        s = wordscan_suite();
         sr = srunner_create(s);
 
         srunner_run_all(sr, CK_NORMAL);

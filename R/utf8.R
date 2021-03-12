@@ -14,43 +14,41 @@
 
 
 # converts a character vector from its declared encoding to UTF-8
-as_utf8 <- function(x, normalize = FALSE)
-{
-    ans <- .Call(rutf8_as_utf8, x)
-    if (normalize) {
-        ans <- utf8_normalize(ans)
-    }
-    ans
+as_utf8 <- function(x, normalize = FALSE) {
+  ans <- .Call(rutf8_as_utf8, x)
+  if (normalize) {
+    ans <- utf8_normalize(ans)
+  }
+  ans
 }
 
 # test whether the elements can be converted to valid UTF-8
-utf8_valid <- function(x)
-{
-    .Call(rutf8_utf8_valid, x)
+utf8_valid <- function(x) {
+  .Call(rutf8_utf8_valid, x)
 }
 
 # gets the width; NA for invalid or nonprintable sequences
-utf8_width <- function(x, encode = TRUE, quote = FALSE, utf8 = NULL)
-{
-    with_rethrow({
-        encode <- as_option("encode", encode)
-        quote <- as_option("quote", quote)
-        utf8 <- as_output_utf8("utf8", utf8)
-    })
-    .Call(rutf8_utf8_width, x, encode, quote, utf8)
+utf8_width <- function(x, encode = TRUE, quote = FALSE, utf8 = NULL) {
+  with_rethrow({
+    encode <- as_option("encode", encode)
+    quote <- as_option("quote", quote)
+    utf8 <- as_output_utf8("utf8", utf8)
+  })
+  .Call(rutf8_utf8_width, x, encode, quote, utf8)
 }
 
 utf8_normalize <- function(x, map_case = FALSE, map_compat = FALSE,
-                           map_quote = FALSE, remove_ignorable = FALSE)
-{
-    with_rethrow({
-        x <- as_utf8(x, normalize = FALSE)
-        map_case <- as_option("map_case", map_case)
-        map_compat <- as_option("map_compat", map_compat)
-        map_quote <- as_option("map_quote", map_quote)
-        remove_ignorable <- as_option("remove_ignorable", remove_ignorable)
-    })
+                           map_quote = FALSE, remove_ignorable = FALSE) {
+  with_rethrow({
+    x <- as_utf8(x, normalize = FALSE)
+    map_case <- as_option("map_case", map_case)
+    map_compat <- as_option("map_compat", map_compat)
+    map_quote <- as_option("map_quote", map_quote)
+    remove_ignorable <- as_option("remove_ignorable", remove_ignorable)
+  })
 
-    .Call(rutf8_utf8_normalize, x, map_case, map_compat, map_quote,
-          remove_ignorable)
+  .Call(
+    rutf8_utf8_normalize, x, map_case, map_compat, map_quote,
+    remove_ignorable
+  )
 }

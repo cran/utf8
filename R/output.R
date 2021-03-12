@@ -13,44 +13,42 @@
 #  limitations under the License.
 
 
-output_ansi <- function()
-{
-    # tty?
-    if (isatty(stdout())) {
-        # and not Windows GUI?
-        return(.Platform$GUI != "Rgui")
-    }
+output_ansi <- function() {
+  # tty?
+  if (isatty(stdout())) {
+    # and not Windows GUI?
+    return(.Platform$GUI != "Rgui")
+  }
 
-    # RStudio 1.1 or later with color enabled?
-    if (!is.na(as.numeric(Sys.getenv("RSTUDIO_CONSOLE_COLOR")))) {
-        # and output is stdout?
-        return(stdout() == 1)
-    }
+  # RStudio 1.1 or later with color enabled?
+  if (!is.na(as.numeric(Sys.getenv("RSTUDIO_CONSOLE_COLOR")))) {
+    # and output is stdout?
+    return(stdout() == 1)
+  }
 
-    FALSE
+  FALSE
 }
 
 
-output_utf8 <- function()
-{
-    # ASCII-only character locale?
-    if (Sys.getlocale("LC_CTYPE") == "C") {
-        return(FALSE)
-    }
+output_utf8 <- function() {
+  # ASCII-only character locale?
+  if (Sys.getlocale("LC_CTYPE") == "C") {
+    return(FALSE)
+  }
 
-    # UTF-8 locale?
-    if (l10n_info()$`UTF-8`) {
-        return(TRUE)
-    }
+  # UTF-8 locale?
+  if (l10n_info()$`UTF-8`) {
+    return(TRUE)
+  }
 
-    # Windows?
-    if (.Platform$OS.type == "windows") {
-        # This isn't really the case, but there's no way to set the
-        # locale to UTF-8 on Windows. In RGui and RStudio, UTF-8 is
-        # always supported on stdout(); output through connections
-        # gets translated through the native locale.
-        return(TRUE)
-    }
+  # Windows?
+  if (.Platform$OS.type == "windows") {
+    # This isn't really the case, but there's no way to set the
+    # locale to UTF-8 on Windows. In RGui and RStudio, UTF-8 is
+    # always supported on stdout(); output through connections
+    # gets translated through the native locale.
+    return(TRUE)
+  }
 
-    FALSE
+  FALSE
 }
