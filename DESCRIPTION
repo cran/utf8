@@ -1,6 +1,6 @@
 Package: utf8
 Title: Unicode Text Processing
-Version: 1.2.3
+Version: 1.2.4
 Authors@R: 
     c(person(given = c("Patrick", "O."),
              family = "Perry",
@@ -26,10 +26,10 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 NeedsCompilation: yes
-Packaged: 2023-01-31 05:28:43 UTC; kirill
+Packaged: 2023-10-22 13:43:19 UTC; kirill
 Author: Patrick O. Perry [aut, cph],
   Kirill Müller [cre],
   Unicode, Inc. [cph, dtc] (Unicode Character Database)
 Maintainer: Kirill Müller <kirill@cynkra.com>
 Repository: CRAN
-Date/Publication: 2023-01-31 18:00:02 UTC
+Date/Publication: 2023-10-22 21:50:02 UTC
