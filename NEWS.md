@@ -1,5 +1,20 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# utf8 1.2.6 (2025-06-08)
+
+## Chore
+
+- Format with air.
+
+## Continuous integration
+
+- Enhance permissions for workflow (#77).
+
+## Documentation
+
+- Fix URL (@olivroy, #78).
+
+
 # utf8 1.2.5 (2025-05-01)
 
 ## Features
